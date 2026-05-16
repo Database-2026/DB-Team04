@@ -130,4 +130,59 @@ CREATE TABLE UserSubscription (
 
 
 
- 
+ -- =========================================================
+-- View 생성
+-- =========================================================
+
+CREATE VIEW PlatformContentView AS
+SELECT
+    PC.pc_id,
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year,
+    P.platform_id,
+    P.platform_name,
+    P.platform_price,
+    PC.platform_rating,
+    PC.is_available,
+    PC.added_at
+FROM PlatformContent PC
+JOIN Content C ON PC.content_id = C.content_id
+JOIN Platform P ON PC.platform_id = P.platform_id;
+
+
+CREATE VIEW HighRatedContentView AS
+SELECT
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year,
+    ROUND(AVG(R.rating), 2) AS avg_user_rating,
+    COUNT(R.review_id) AS review_count
+FROM Content C
+JOIN PlatformContent PC ON C.content_id = PC.content_id
+JOIN Review R ON PC.pc_id = R.pc_id
+GROUP BY
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year
+HAVING AVG(R.rating) >= 4.0;
+
+
+-- =========================================================
+-- Index 생성
+-- =========================================================
+
+CREATE INDEX idx_content_title
+ON Content(title);
+
+CREATE INDEX idx_watchhistory_user
+ON WatchHistory(user_id);
+
+CREATE INDEX idx_platformcontent_content
+ON PlatformContent(content_id);
+
+CREATE INDEX idx_review_user
+ON Review(user_id);
