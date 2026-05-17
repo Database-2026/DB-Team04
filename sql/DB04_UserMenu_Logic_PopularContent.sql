@@ -24,7 +24,7 @@ HAVING AVG(r.rating) >= 4.0
 ORDER BY AVG(r.rating) DESC, COUNT(r.review_id) DESC;
 
 -- 3. 내가 본 장르 기반 추천
--- JOIN 쿼리용 [인기 콘텐츠 및 추천 조회] >> (3. 내가 본 장르 기반 추천) 다만 user_id=1임을 가정함.
+-- JOIN 쿼리용 [인기 콘텐츠 및 추천 조회] >> (3. 내가 본 장르 기반 추천)
 -- 동적쿼리가 될 예정
 SELECT DISTINCT c.title, g.genre_name
 FROM Content c
@@ -42,7 +42,7 @@ LIMIT 5;
 
 -- 4. 플랫폼별 추천 콘텐츠 조회
 -- [인기 콘텐츠 및 추천 조회] > (4. 플랫폼별 추천 콘텐츠 조회)
--- 특정 유저(user_id = 1)가 구독 중인 플랫폼의 콘텐츠만 조회 >> 동적쿼리가 될 예정
+-- 특정 유저가 구독 중인 플랫폼의 콘텐츠만 조회 >> 동적쿼리가 될 예정
 SELECT 
     u.username, 
     p.platform_name, 
