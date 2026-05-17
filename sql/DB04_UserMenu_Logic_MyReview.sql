@@ -80,7 +80,7 @@ DELETE FROM Review
 WHERE review_id = ?
 AND user_id = ?;
 
--- 6. 시청 완료 및 리뷰 작성
+-- 6. 시청 완료 및 리뷰 작성 >> 트랜잭션으로 구현해야함!!!
 -- 1) WatchHistory 상태 변경
 UPDATE WatchHistory
 SET
