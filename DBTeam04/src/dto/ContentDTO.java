@@ -8,10 +8,10 @@ public class ContentDTO {
     private int release_year;
     private String age_rating;
     private String description;
-
+//기본생성자. 나중에 setter로 값 채움
     public ContentDTO() {
     }
-
+//한번에 값 넣는 생성자
     public ContentDTO(
             int content_id,
             String title,
