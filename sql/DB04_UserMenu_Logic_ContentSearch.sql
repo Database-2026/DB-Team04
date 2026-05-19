@@ -1,17 +1,26 @@
 -- [콘텐츠 검색 및 조회]
+
+--- 뷰 생성
 CREATE VIEW v_content_detail AS
-SELECT 
-    c.content_id,
+SELECT
     c.title AS '제목',
     c.content_type AS '유형',
-    g.genre_name AS '장르',
+    GROUP_CONCAT(
+        g.genre_name
+        SEPARATOR ', '
+    ) AS '장르',
     p.platform_name AS '플랫폼',
     pc.platform_rating AS '플랫폼평점'
 FROM Content c
 JOIN ContentGenre cg ON c.content_id = cg.content_id
 JOIN Genre g ON cg.genre_id = g.genre_id
 JOIN PlatformContent pc ON c.content_id = pc.content_id
-JOIN Platform p ON pc.platform_id = p.platform_id;
+JOIN Platform p ON pc.platform_id = p.platform_id
+GROUP BY
+    c.title,
+    c.content_type,
+    p.platform_name,
+    pc.platform_rating;
 
 -- 1. 제목으로 콘텐츠 검색
 SELECT * FROM v_content_detail 
