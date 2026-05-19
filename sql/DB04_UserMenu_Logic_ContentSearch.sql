@@ -33,7 +33,7 @@ ORDER BY 제목 ASC;
 
 -- 2. 장르별 콘텐츠 검색
 SELECT * FROM v_content_detail 
-WHERE 장르 = ? 
+WHERE 장르 LIKE ?
 ORDER BY 플랫폼평점 DESC;
 
 -- 자바 포인트: pstmt.setString(1, selectedGenre);
