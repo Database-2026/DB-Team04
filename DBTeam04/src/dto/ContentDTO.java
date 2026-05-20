@@ -8,17 +8,23 @@ public class ContentDTO {
     private int release_year;
     private String age_rating;
     private String description;
-//기본생성자. 나중에 setter로 값 채움
-    public ContentDTO() {
-    }
-//한번에 값 넣는 생성자
+    
+    private String genre;
+    private String platformName;
+    private double platformRating;
+
+    public ContentDTO(){}
+    
     public ContentDTO(
             int content_id,
             String title,
             String content_type,
             int release_year,
             String age_rating,
-            String description) {
+            String description, 
+            String genre,
+            String platformName,
+            double platformRating) {
 
         this.content_id = content_id;
         this.title = title;
@@ -26,6 +32,9 @@ public class ContentDTO {
         this.release_year = release_year;
         this.age_rating = age_rating;
         this.description = description;
+        this.genre=genre;
+        this.platformName=platformName;
+        this.platformRating=platformRating;
     }
 
     public int getContentId() {
@@ -76,35 +85,29 @@ public class ContentDTO {
         this.description = description;
     }
 
-   
-    public String toString() {
-
-        String result = "";
-
-        if(content_id != 0) {
-            result += "  content_id=" + content_id;
-        }
-
-        if(title != null) {
-            result += "  title=" + title;
-        }
-
-        if(content_type != null) {
-            result += "  content_type=" + content_type;
-        }
-
-        if(release_year != 0) {
-            result += "  release_year=" + release_year;
-        }
-
-        if(age_rating != null) {
-            result += "  age_rating=" + age_rating;
-        }
-
-        if(description != null) {
-            result += "  description=" + description;
-        }
-
-        return result;
+    public String getGenre() {
+        return genre;
     }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    public double getPlatformRating() {
+        return platformRating;
+    }
+
+    public void setPlatformRating(double platformRating) {
+        this.platformRating = platformRating;
+    }
+   
+
 }
