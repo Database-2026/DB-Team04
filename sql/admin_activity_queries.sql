@@ -69,7 +69,7 @@ ORDER BY WH.watched_date DESC;
 -- =========================================================
 
 
--- 2-1. user_id 기준 사용자별 감상 기록 조회
+-- 2. 사용자별 감상 기록조회( 수정)
 
 SELECT
     WH.history_id,
@@ -86,62 +86,20 @@ JOIN Users U ON WH.user_id = U.user_id
 JOIN PlatformContent PC ON WH.pc_id = PC.pc_id
 JOIN Content C ON PC.content_id = C.content_id
 JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE U.user_id = @target_user_id
+WHERE U.user_id = ?        -- 1) ID로 정확히 검색할 때 사용
+   OR U.username LIKE ?    -- 2) 이름으로 검색할 때 사용 (예: '%김%')
+   OR U.email LIKE ?       -- 3) 이메일로 검색할 때 사용 (예: '%example.com%')
 ORDER BY WH.watched_date DESC;
-
-
-
--- 2-2. username 기준 사용자별 감상 기록 조회
--- Dynamic Query 또는 검색 기능 구현 시 사용할 수 있다.
-
-SELECT
-    WH.history_id,
-    U.user_id,
-    U.username,
-    U.email,
-    C.title,
-    P.platform_name,
-    WH.watch_status,
-    WH.watched_date
-FROM WatchHistory WH
-JOIN Users U ON WH.user_id = U.user_id
-JOIN PlatformContent PC ON WH.pc_id = PC.pc_id
-JOIN Content C ON PC.content_id = C.content_id
-JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE U.username LIKE '%김%'
-ORDER BY WH.watched_date DESC;
-
-
--- 2-3. email 기준 사용자별 감상 기록 조회
-
-SELECT
-    WH.history_id,
-    U.user_id,
-    U.username,
-    U.email,
-    C.title,
-    P.platform_name,
-    WH.watch_status,
-    WH.watched_date
-FROM WatchHistory WH
-JOIN Users U ON WH.user_id = U.user_id
-JOIN PlatformContent PC ON WH.pc_id = PC.pc_id
-JOIN Content C ON PC.content_id = C.content_id
-JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE U.email LIKE '%example.com%'
-ORDER BY WH.watched_date DESC;
-
+	
 
 -- =========================================================
 -- 3. 콘텐츠별 감상 기록 조회
 -- =========================================================
 -- 특정 콘텐츠를 감상한 사용자들의 기록을 조회한다.
--- 하나의 콘텐츠가 여러 플랫폼에서 제공될 수 있으므로 content_id 기준으로 조회한다.
 -- =========================================================
 
 
--- 3-1. content_id 기준 콘텐츠별 감상 기록 조회
-
+-- 3. 콘텐츠별 감상 기록 조회 (ID 및 제목 통합)
 SELECT
     WH.history_id,
     C.content_id,
@@ -157,29 +115,8 @@ JOIN Users U ON WH.user_id = U.user_id
 JOIN PlatformContent PC ON WH.pc_id = PC.pc_id
 JOIN Content C ON PC.content_id = C.content_id
 JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE C.content_id = @target_content_id
-ORDER BY WH.watched_date DESC;
-
-
-
-
--- 3-2. 콘텐츠 제목 기준 감상 기록 조회
--- title LIKE 조건을 사용하므로 Dynamic Query 예시로도 활용 가능하다.
-
-SELECT
-    WH.history_id,
-    C.content_id,
-    C.title,
-    P.platform_name,
-    U.username,
-    WH.watch_status,
-    WH.watched_date
-FROM WatchHistory WH
-JOIN Users U ON WH.user_id = U.user_id
-JOIN PlatformContent PC ON WH.pc_id = PC.pc_id
-JOIN Content C ON PC.content_id = C.content_id
-JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE C.title LIKE '%무빙%'
+WHERE C.content_id = ?     -- 첫 번째 ? (콘텐츠 ID가 정확히 일치할 때)
+   OR C.title LIKE ?       -- 두 번째 ? (콘텐츠 제목에 입력어가 포함될 때, 예: '%무빙%')
 ORDER BY WH.watched_date DESC;
 
 
@@ -218,35 +155,13 @@ ORDER BY R.review_date DESC;
 -- =========================================================
 
 
--- 5-1. user_id 기준 사용자별 리뷰 조회
-
-SELECT
-    R.review_id,
-    U.user_id,
-    U.username,
-    C.content_id,
-    C.title,
-    P.platform_name,
-    R.rating,
-    R.review_text,
-    R.review_date,
-    R.is_spoiler
-FROM Review R
-JOIN Users U ON R.user_id = U.user_id
-JOIN PlatformContent PC ON R.pc_id = PC.pc_id
-JOIN Content C ON PC.content_id = C.content_id
-JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE U.user_id = @target_user_id
-ORDER BY R.review_date DESC;
-
-
--- 5-2. username 기준 사용자별 리뷰 조회
-
+-- 5. 사용자별 리뷰 조회 (통합 버전)
 SELECT
     R.review_id,
     U.user_id,
     U.username,
     U.email,
+    C.content_id,
     C.title,
     P.platform_name,
     R.rating,
@@ -258,20 +173,31 @@ JOIN Users U ON R.user_id = U.user_id
 JOIN PlatformContent PC ON R.pc_id = PC.pc_id
 JOIN Content C ON PC.content_id = C.content_id
 JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE U.username LIKE '%김%'
+WHERE U.user_id = ?        -- 1) ID로 정확히 검색할 때 사용
+   OR U.username LIKE ?    -- 2) 이름으로 검색할 때 사용
 ORDER BY R.review_date DESC;
 
 
+
 -- =========================================================
--- 6. 콘텐츠별 리뷰 조회
--- =========================================================
--- 특정 콘텐츠에 작성된 리뷰를 조회한다.
--- 하나의 콘텐츠가 여러 플랫폼에 있을 수 있으므로 content_id 기준으로 조회한다.
+-- 6. 콘텐츠별 리뷰 조회 및 통계 (통합)
 -- =========================================================
 
+-- 6-1. [통계용] 콘텐츠별 평균 평점 및 리뷰 수 조회 (ID 또는 제목 검색)
+SELECT
+    C.content_id,
+    C.title,
+    ROUND(AVG(R.rating), 2) AS avg_rating,
+    COUNT(R.review_id) AS review_count
+FROM Content C
+LEFT JOIN PlatformContent PC ON C.content_id = PC.content_id
+LEFT JOIN Review R ON PC.pc_id = R.pc_id
+WHERE C.content_id = ? 
+   OR C.title LIKE ?
+GROUP BY C.content_id, C.title;
 
--- 6-1. content_id 기준 콘텐츠별 리뷰 조회
 
+-- 6-2. [목록용] 콘텐츠별 상세 리뷰 목록 조회 (ID 또는 제목 검색)
 SELECT
     R.review_id,
     C.content_id,
@@ -288,48 +214,9 @@ JOIN Users U ON R.user_id = U.user_id
 JOIN PlatformContent PC ON R.pc_id = PC.pc_id
 JOIN Content C ON PC.content_id = C.content_id
 JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE C.content_id = @target_content_id
+WHERE C.content_id = ?
+   OR C.title LIKE ?
 ORDER BY R.review_date DESC;
-
-
-
-
--- 6-2. 콘텐츠 제목 기준 리뷰 조회
-
-SELECT
-    R.review_id,
-    C.content_id,
-    C.title,
-    P.platform_name,
-    U.username,
-    R.rating,
-    R.review_text,
-    R.review_date,
-    R.is_spoiler
-FROM Review R
-JOIN Users U ON R.user_id = U.user_id
-JOIN PlatformContent PC ON R.pc_id = PC.pc_id
-JOIN Content C ON PC.content_id = C.content_id
-JOIN Platform P ON PC.platform_id = P.platform_id
-WHERE C.title LIKE '%무빙%'
-ORDER BY R.review_date DESC;
-
-
--- 6-3. 콘텐츠별 평균 평점 및 리뷰 수 조회
-
-SELECT
-    C.content_id,
-    C.title,
-    ROUND(AVG(R.rating), 2) AS avg_rating,
-    COUNT(R.review_id) AS review_count
-FROM Review R
-JOIN PlatformContent PC ON R.pc_id = PC.pc_id
-JOIN Content C ON PC.content_id = C.content_id
-WHERE C.content_id = @target_content_id
-GROUP BY
-    C.content_id,
-    C.title;
-
 
 -- =========================================================
 -- 7. 부적절한 리뷰 삭제

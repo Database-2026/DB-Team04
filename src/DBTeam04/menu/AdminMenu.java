@@ -771,67 +771,55 @@ public class AdminMenu {
                                 .printAllWatchHistory();
 
                 case 2 -> {
+                    System.out.print("조회할 사용자 이름 or ID or email 입력: ");
+                    String keyword = sc.nextLine().trim(); // 💡 앞뒤 공백을 잘라내어 저장
 
-                    System.out.print(
-                            "사용자 이름 검색: "
-                    );
-
-                    String keyword =
-                            sc.nextLine();
-
-                    activityDAO
-                            .printWatchHistoryByUser(
-                                    keyword
-                            );
+                    // 아무것도 입력하지 않고 엔터만 친 경우 방어
+                    if (keyword.isEmpty()) {
+                        System.out.println("검색어를 입력하셔야 합니다!");
+                    } else {
+                        activityDAO.printWatchHistoryByUser(keyword);
+                    }
                 }
 
                 case 3 -> {
+                    System.out.print("조회할 콘텐츠 ID or 제목 입력: ");
+                    String keyword = sc.nextLine().trim(); // 💡 앞뒤 공백을 잘라내어 저장
 
-                    System.out.print(
-                            "콘텐츠 제목 검색: "
-                    );
-
-                    String keyword =
-                            sc.nextLine();
-
-                    activityDAO
-                            .printWatchHistoryByContent(
-                                    keyword
-                            );
+                    // 💡 아무것도 입력하지 않고 엔터만 친 경우 방어
+                    if (keyword.isEmpty()) {
+                        System.out.println("검색어를 입력하셔야 합니다!");
+                    } else {
+                        activityDAO.printWatchHistoryByContent(keyword);
+                    }
                 }
-
+                
                 case 4 ->
                         activityDAO
                                 .printAllReviews();
 
                 case 5 -> {
 
-                    System.out.print(
-                            "사용자 이름 검색: "
-                    );
+                	System.out.print("조회할 사용자 ID 또는 이름 입력: ");
+                    String keyword = sc.nextLine().trim(); // 앞뒤 공백 제거 및 입력 받기
 
-                    String keyword =
-                            sc.nextLine();
-
-                    activityDAO
-                            .printReviewsByUser(
-                                    keyword
-                            );
+                    if (keyword.isEmpty()) {
+                        System.out.println("검색어를 입력하셔야 합니다!");
+                    } else {
+                        activityDAO.printReviewsByUser(keyword); // 우리가 만든 통합 메소드 호출!
+                    }
                 }
 
                 case 6 -> {
+                    System.out.print("조회할 콘텐츠 ID 또는 제목 입력: ");
+                    String keyword = sc.nextLine().trim(); // 앞뒤 공백 제거 및 입력 받기
 
-                    System.out.print(
-                            "콘텐츠 제목 검색: "
-                    );
-
-                    String keyword =
-                            sc.nextLine();
-
-                    activityDAO
-                            .printReviewsByContent(
-                                    keyword
-                            );
+                    if (keyword.isEmpty()) {
+                        System.out.println("검색어를 입력하셔야 합니다!");
+                    } else {
+                        // 우리가 만든 통계+목록 통합 메소드 호출!
+                        activityDAO.printReviewsByContent(keyword);
+                    }
                 }
 
                 case 7 -> {
@@ -853,8 +841,8 @@ public class AdminMenu {
 
                     System.out.println(
                             success ?
-                            "리뷰 삭제 완료." :
-                            "리뷰 삭제 실패."
+                            "리뷰 삭제 완료!" :
+                            "리뷰 삭제 실패!"
                     );
                 }
 
