@@ -55,8 +55,19 @@ ORDER BY 플랫폼평점 DESC;
 -- 자바 포인트: pstmt.setString(1, platformName);
 
 -- 5. 콘텐츠 상세 정보 조회
-SELECT * FROM v_content_detail 
-WHERE content_id = ?;
+SELECT 
+    c.content_id, 
+    c.release_year, 
+    c.age_rating, 
+    c.description,
+    v.제목, 
+    v.유형, 
+    v.장르, 
+    v.플랫폼, 
+    v.플랫폼평점
+FROM Content c
+JOIN v_content_detail v ON c.title = v.제목 AND c.content_type = v.유형
+WHERE 제목 LIKE ?
 
 -- 자바 코드 예시
 -- String sql = "SELECT * FROM v_content_detail WHERE content_id = ?";
