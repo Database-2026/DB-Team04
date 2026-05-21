@@ -459,4 +459,63 @@ public class ContentDAO {
             e.printStackTrace();
         }
     }
+
+    
+// [내 리뷰 및 평점 관리] >> 3. 콘텐츠별 리뷰 조회
+    public void printReviewsByContent(String title) {
+        // 뷰(v_review_detail)를 사용하는 쿼리입니다.
+        String sql = """
+                SELECT 
+                    username, 
+                    rating, 
+                    review_text, 
+                    review_date, 
+                    is_spoiler
+                FROM v_review_detail
+                WHERE title = ?
+                ORDER BY review_date DESC
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setString(1, title);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                System.out.println("\n💬 [" + title + "] 에 대한 유저 리뷰");
+                System.out.println("==========================================================");
+                
+                boolean hasData = false;
+                while (rs.next()) {
+                    hasData = true;
+                    String user = rs.getString("username");
+                    double rating = rs.getDouble("rating");
+                    String text = rs.getString("review_text");
+                    String date = rs.getString("review_date");
+                    String isSpoiler = rs.getString("is_spoiler");
+
+                    // 스포일러 여부에 따른 아이콘 표시
+                    String spoilerTag = "Y".equalsIgnoreCase(isSpoiler) ? "[⚠️스포주의]" : "[Clean]";
+                    
+                    // 별점 시각화 (5점 만점 기준)
+                    String stars = "⭐".repeat((int) rating);
+
+                    System.out.printf("%s %-10s | 평점: %.1f %s | 작성일: %s\n", 
+                                      spoilerTag, user, rating, stars, date);
+                    System.out.println("리뷰 내용: " + text);
+                    System.out.println("----------------------------------------------------------");
+                }
+
+                if (!hasData) {
+                    System.out.println("   아직 작성된 리뷰가 없습니다. 첫 번째 리뷰를 남겨보세요!");
+                }
+                System.out.println("==========================================================");
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ 리뷰 조회 중 오류가 발생했습니다.");
+            e.printStackTrace();
+        }
+    }
+    
 }
