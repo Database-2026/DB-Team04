@@ -45,6 +45,28 @@ public class Main {
 
         dao.printUserContentDetail("좀비");
 */
+
+		
+		//[인기 콘텐츠 및 추천 조회] >> 1. 전체 인기 콘텐츠 조회
+		/*
+		 * ContentDAO dao = new ContentDAO(); dao.printTopPopularContents();
+		 */
+    	
+    	//[인기 콘텐츠 및 추천 조회] >> 2. 높은 평점 콘텐츠 조회
+//    	ContentDAO dao = new ContentDAO();
+//    	dao.printHighRatedContents();
+    	
+    	
+    	//[인기 콘텐츠 및 추천 조회] >> 3. 내가 본 장르 기반 추천
+		/*
+		 * ContentDAO dao = new ContentDAO(); dao.printRecommendedByGenre(23);
+		 */
+    	
+    	 // [인기 콘텐츠 및 추천 조회] >> 4. 플랫폼별 추천 콘텐츠 조회
+			/*
+			 * ContentDAO dao = new ContentDAO(); dao.printRecommendedBySubscription(24);
+			 */
+
        
     }
 }
