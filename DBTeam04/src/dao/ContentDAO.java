@@ -259,7 +259,6 @@ public class ContentDAO {
     
 //[인기 콘텐츠 및 추천 조회]
 
-    //1. 전체 인기 콘텐츠 조회 (아직 구현 안함, 포맷만 불러옴)
  // [인기 콘텐츠 및 추천 조회] >> 1. 전체 인기 콘텐츠 조회
     public void printTopPopularContents() {
         // 순위 표시를 위해 조회수를 함께 가져옵니다.
