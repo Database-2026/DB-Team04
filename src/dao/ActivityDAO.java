@@ -128,45 +128,307 @@ public class ActivityDAO {
         return list;
     }
 
+    // 리뷰 중복 여부 확인
+    public boolean hasReview(int userId, int pcId) {
+        String sql = """
+                SELECT COUNT(*) AS cnt
+                FROM Review
+                WHERE user_id = ?
+                  AND pc_id = ?
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, pcId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("cnt") > 0;
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("리뷰 중복 확인 중 오류 발생");
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     // 시청 기록 추가
     public int addWatchHistory(int userId, int pcId, String watchStatus) {
-        // 추후 INSERT 쿼리 연결 예정
-        return 0;
+        int result = 0;
+
+        String sql = """
+                INSERT INTO WatchHistory (user_id, pc_id, watch_status, watched_date)
+                VALUES (?, ?, ?, NOW())
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, pcId);
+            pstmt.setString(3, watchStatus);
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("시청 기록 추가 중 오류 발생");
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     // 시청 상태 수정
     public int updateWatchStatus(int historyId, int userId, String watchStatus) {
-        // 추후 UPDATE 쿼리 연결 예정
-        return 0;
+        int result = 0;
+
+        String sql = """
+                UPDATE WatchHistory
+                SET watch_status = ?,
+                    watched_date = NOW()
+                WHERE history_id = ?
+                  AND user_id = ?
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setString(1, watchStatus);
+            pstmt.setInt(2, historyId);
+            pstmt.setInt(3, userId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("시청 상태 수정 중 오류 발생");
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     // 시청 기록 삭제
     public int deleteWatchHistory(int historyId, int userId) {
-        // 추후 DELETE 쿼리 연결 예정
-        return 0;
+        int result = 0;
+
+        String sql = """
+                DELETE FROM WatchHistory
+                WHERE history_id = ?
+                  AND user_id = ?
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setInt(1, historyId);
+            pstmt.setInt(2, userId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("시청 기록 삭제 중 오류 발생");
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     // 리뷰 작성
     public int addReview(int userId, int pcId, int rating, String reviewText, boolean isSpoiler) {
-        // 추후 INSERT 쿼리 연결 예정
-        return 0;
+        int result = 0;
+
+        if (rating < 1 || rating > 5) {
+            System.out.println("평점은 1점 이상 5점 이하만 입력할 수 있습니다.");
+            return 0;
+        }
+
+        if (hasReview(userId, pcId)) {
+            System.out.println("이미 해당 콘텐츠에 작성한 리뷰가 있습니다.");
+            return 0;
+        }
+
+        String sql = """
+                INSERT INTO Review (user_id, pc_id, rating, review_text, is_spoiler)
+                VALUES (?, ?, ?, ?, ?)
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, pcId);
+            pstmt.setInt(3, rating);
+            pstmt.setString(4, reviewText);
+            pstmt.setBoolean(5, isSpoiler);
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("리뷰 작성 중 오류 발생");
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     // 리뷰 수정
     public int updateReview(int reviewId, int userId, int rating, String reviewText, boolean isSpoiler) {
-        // 추후 UPDATE 쿼리 연결 예정
-        return 0;
+        int result = 0;
+
+        if (rating < 1 || rating > 5) {
+            System.out.println("평점은 1점 이상 5점 이하만 입력할 수 있습니다.");
+            return 0;
+        }
+
+        String sql = """
+                UPDATE Review
+                SET rating = ?,
+                    review_text = ?,
+                    is_spoiler = ?,
+                    review_date = NOW()
+                WHERE review_id = ?
+                  AND user_id = ?
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setInt(1, rating);
+            pstmt.setString(2, reviewText);
+            pstmt.setBoolean(3, isSpoiler);
+            pstmt.setInt(4, reviewId);
+            pstmt.setInt(5, userId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("리뷰 수정 중 오류 발생");
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     // 리뷰 삭제
     public int deleteReview(int reviewId, int userId) {
-        // 추후 DELETE 쿼리 연결 예정
-        return 0;
+        int result = 0;
+
+        String sql = """
+                DELETE FROM Review
+                WHERE review_id = ?
+                  AND user_id = ?
+                """;
+
+        try (
+            Connection conn = DBUtil.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)
+        ) {
+            pstmt.setInt(1, reviewId);
+            pstmt.setInt(2, userId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("리뷰 삭제 중 오류 발생");
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     // 시청 완료 + 리뷰 작성 트랜잭션
     public boolean completeWatchAndAddReview(int userId, int pcId, int rating, String reviewText, boolean isSpoiler) {
-        // DBUtil.java 연결 후 conn.setAutoCommit(false)로 구현 예정
-        return false;
+        boolean success = false;
+
+        if (rating < 1 || rating > 5) {
+            System.out.println("평점은 1점 이상 5점 이하만 입력할 수 있습니다.");
+            return false;
+        }
+
+        if (hasReview(userId, pcId)) {
+            System.out.println("이미 해당 콘텐츠에 작성한 리뷰가 있어 트랜잭션을 진행할 수 없습니다.");
+            return false;
+        }
+
+        String watchSql = """
+                INSERT INTO WatchHistory (user_id, pc_id, watch_status, watched_date)
+                VALUES (?, ?, 'COMPLETED', NOW())
+                """;
+
+        String reviewSql = """
+                INSERT INTO Review (user_id, pc_id, rating, review_text, is_spoiler)
+                VALUES (?, ?, ?, ?, ?)
+                """;
+
+        Connection conn = null;
+
+        try {
+            conn = DBUtil.getConnection();
+
+            if (conn == null) {
+                System.out.println("DB 연결 실패로 트랜잭션을 진행할 수 없습니다.");
+                return false;
+            }
+
+            conn.setAutoCommit(false);
+
+            try (
+                PreparedStatement watchPstmt = conn.prepareStatement(watchSql);
+                PreparedStatement reviewPstmt = conn.prepareStatement(reviewSql)
+            ) {
+                // 1. 시청 완료 기록 추가
+                watchPstmt.setInt(1, userId);
+                watchPstmt.setInt(2, pcId);
+                watchPstmt.executeUpdate();
+
+                // 2. 리뷰 작성
+                reviewPstmt.setInt(1, userId);
+                reviewPstmt.setInt(2, pcId);
+                reviewPstmt.setInt(3, rating);
+                reviewPstmt.setString(4, reviewText);
+                reviewPstmt.setBoolean(5, isSpoiler);
+                reviewPstmt.executeUpdate();
+
+                conn.commit();
+                success = true;
+            }
+
+        } catch (Exception e) {
+            System.out.println("시청 완료 + 리뷰 작성 트랜잭션 중 오류 발생");
+
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                    System.out.println("rollback 완료");
+                }
+            } catch (Exception rollbackException) {
+                rollbackException.printStackTrace();
+            }
+
+            e.printStackTrace();
+
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (Exception closeException) {
+                closeException.printStackTrace();
+            }
+        }
+
+        return success;
     }
 }
