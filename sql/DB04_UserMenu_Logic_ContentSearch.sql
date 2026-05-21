@@ -1,17 +1,26 @@
 -- [콘텐츠 검색 및 조회]
+
+--- 뷰 생성
 CREATE VIEW v_content_detail AS
-SELECT 
-    c.content_id,
+SELECT
     c.title AS '제목',
     c.content_type AS '유형',
-    g.genre_name AS '장르',
+    GROUP_CONCAT(
+        g.genre_name
+        SEPARATOR ', '
+    ) AS '장르',
     p.platform_name AS '플랫폼',
     pc.platform_rating AS '플랫폼평점'
 FROM Content c
 JOIN ContentGenre cg ON c.content_id = cg.content_id
 JOIN Genre g ON cg.genre_id = g.genre_id
 JOIN PlatformContent pc ON c.content_id = pc.content_id
-JOIN Platform p ON pc.platform_id = p.platform_id;
+JOIN Platform p ON pc.platform_id = p.platform_id
+GROUP BY
+    c.title,
+    c.content_type,
+    p.platform_name,
+    pc.platform_rating;
 
 -- 1. 제목으로 콘텐츠 검색
 SELECT * FROM v_content_detail 
@@ -24,7 +33,7 @@ ORDER BY 제목 ASC;
 
 -- 2. 장르별 콘텐츠 검색
 SELECT * FROM v_content_detail 
-WHERE 장르 = ? 
+WHERE 장르 LIKE ?
 ORDER BY 플랫폼평점 DESC;
 
 -- 자바 포인트: pstmt.setString(1, selectedGenre);
@@ -46,8 +55,19 @@ ORDER BY 플랫폼평점 DESC;
 -- 자바 포인트: pstmt.setString(1, platformName);
 
 -- 5. 콘텐츠 상세 정보 조회
-SELECT * FROM v_content_detail 
-WHERE content_id = ?;
+SELECT 
+    c.content_id, 
+    c.release_year, 
+    c.age_rating, 
+    c.description,
+    v.제목, 
+    v.유형, 
+    v.장르, 
+    v.플랫폼, 
+    v.플랫폼평점
+FROM Content c
+JOIN v_content_detail v ON c.title = v.제목 AND c.content_type = v.유형
+WHERE 제목 LIKE ?
 
 -- 자바 코드 예시
 -- String sql = "SELECT * FROM v_content_detail WHERE content_id = ?";

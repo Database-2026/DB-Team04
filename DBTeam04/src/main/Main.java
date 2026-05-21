@@ -1,6 +1,5 @@
 package main;
 
-import java.util.ArrayList;
 
 import dao.ContentDAO;
 import dto.ContentDTO;
@@ -8,22 +7,71 @@ import dto.ContentDTO;
 public class Main {
 
     public static void main(String[] args) {
-/*// [콘텐츠 검색 및 조회] >> 1. 제목으로 콘텐츠 검색
-        ContentDAO dao1 = new ContentDAO();
-
-        ArrayList<ContentDTO> list = dao1.searchByTitle("대군부인");
-
-        for(ContentDTO dto : list) {
-            System.out.println(dto);
-        }
-  */      
+    	
+    	// [콘텐츠 검색 및 조회] >> 1. 제목으로 콘텐츠 검색
+        // Main.java 예시
+    	/*
+    	ContentDAO dao = new ContentDAO();
+    	dao.searchByTitle("골드");
+    */
+    	
     	// [콘텐츠 검색 및 조회] >> 2. 장르별 콘텐츠 검색
-        ContentDAO dao2 = new ContentDAO();
+		/*
+		 * ContentDAO dao2 = new ContentDAO();
+		 * 
+		 * dao2.searchByGenre("코미디");
+		 */
+        
+        
+      
+    	//[콘텐츠 검색 및 조회] >> 3. 유형별 콘텐츠 검색 
+		/*
+		 * ContentDAO dao=new ContentDAO(); dao.searchByType("예능");
+		 */
+    	
+    	
+    	//[콘텐츠 검색 및 조회] >> 4. 플랫폼별 콘텐츠 검색 
+    	
+		/*
+		 * ContentDAO dao = new ContentDAO();
+		 * 
+		 * dao.searchByPlatform("Netflix");
+		 */
+        
+    	
+    	//[콘텐츠 검색 및 조회] >> 5. 콘텐츠 상세 정보 조회
+    	/*
+    	ContentDAO dao = new ContentDAO();
 
-        ArrayList<ContentDTO> list2 =dao2.searchByGenre("드라마");
+        dao.printUserContentDetail("좀비");
+*/
 
-        for(ContentDTO dto : list2) {
-            System.out.println(dto);
-        }
+		
+		//[인기 콘텐츠 및 추천 조회] >> 1. 전체 인기 콘텐츠 조회
+		/*
+		 * ContentDAO dao = new ContentDAO(); dao.printTopPopularContents();
+		 */
+    	
+    	//[인기 콘텐츠 및 추천 조회] >> 2. 높은 평점 콘텐츠 조회
+//    	ContentDAO dao = new ContentDAO();
+//    	dao.printHighRatedContents();
+    	
+    	
+    	//[인기 콘텐츠 및 추천 조회] >> 3. 내가 본 장르 기반 추천
+		/*
+		 * ContentDAO dao = new ContentDAO(); dao.printRecommendedByGenre(23);
+		 */
+    	
+    	 // [인기 콘텐츠 및 추천 조회] >> 4. 플랫폼별 추천 콘텐츠 조회
+			/*
+			 * ContentDAO dao = new ContentDAO(); dao.printRecommendedBySubscription(24);
+			 */
+
+		
+		//[내 리뷰 및 평점 관리] >> 3. 콘텐츠별 리뷰 조회
+		/*
+		 * ContentDAO dao = new ContentDAO(); dao.printReviewsByContent("리버스");
+		 */
+       
     }
 }
