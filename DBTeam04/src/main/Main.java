@@ -67,6 +67,11 @@ public class Main {
 			 * ContentDAO dao = new ContentDAO(); dao.printRecommendedBySubscription(24);
 			 */
 
+		
+		//[내 리뷰 및 평점 관리] >> 3. 콘텐츠별 리뷰 조회
+		/*
+		 * ContentDAO dao = new ContentDAO(); dao.printReviewsByContent("리버스");
+		 */
        
     }
 }
