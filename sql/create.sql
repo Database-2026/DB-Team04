@@ -55,7 +55,9 @@ CREATE TABLE PlatformContent (
     pc_id               INT             NOT NULL AUTO_INCREMENT,
     content_id          INT             NOT NULL,
     platform_id         INT             NOT NULL,
-    platform_rating     DECIMAL(3, 2),          
+
+    platform_rating     DECIMAL(3, 2),                
+
     is_available        BOOLEAN         NOT NULL DEFAULT TRUE,
     added_at            DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
  
@@ -127,7 +129,6 @@ CREATE TABLE UserSubscription (
     CONSTRAINT fk_us_platform   FOREIGN KEY (platform_id)   REFERENCES Platform(platform_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
  
-
 
 
  -- =========================================================
@@ -225,3 +226,4 @@ JOIN Users U ON R.user_id = U.user_id
 JOIN PlatformContent PC ON R.pc_id = PC.pc_id
 JOIN Content C ON PC.content_id = C.content_id
 JOIN Platform P ON PC.platform_id = P.platform_id;
+
