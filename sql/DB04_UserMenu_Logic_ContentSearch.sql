@@ -1,0 +1,76 @@
+-- [콘텐츠 검색 및 조회]
+
+--- 뷰 생성
+CREATE VIEW v_content_detail AS
+SELECT
+    c.title AS '제목',
+    c.content_type AS '유형',
+    GROUP_CONCAT(
+        g.genre_name
+        SEPARATOR ', '
+    ) AS '장르',
+    p.platform_name AS '플랫폼',
+    pc.platform_rating AS '플랫폼평점'
+FROM Content c
+JOIN ContentGenre cg ON c.content_id = cg.content_id
+JOIN Genre g ON cg.genre_id = g.genre_id
+JOIN PlatformContent pc ON c.content_id = pc.content_id
+JOIN Platform p ON pc.platform_id = p.platform_id
+GROUP BY
+    c.title,
+    c.content_type,
+    p.platform_name,
+    pc.platform_rating;
+
+-- 1. 제목으로 콘텐츠 검색
+SELECT * FROM v_content_detail 
+WHERE 제목 LIKE ? 
+ORDER BY 제목 ASC;
+
+-- 자바 포인트: 
+-- pstmt.setString(1, "%" + searchKeyword + "%"); 형태로 양쪽에 와일드카드를 붙여서 전달합니다.
+
+
+-- 2. 장르별 콘텐츠 검색
+SELECT * FROM v_content_detail 
+WHERE 장르 LIKE ?
+ORDER BY 플랫폼평점 DESC;
+
+-- 자바 포인트: pstmt.setString(1, selectedGenre);
+
+
+-- 3. 콘텐츠 유형별 검색 (영화/드라마/예능/애니 등)
+SELECT * FROM v_content_detail
+WHERE 유형 = ? 
+ORDER BY 제목 ASC;
+
+-- 자바 포인트: pstmt.setString(1, typeName);
+
+
+-- 4. 플랫폼별 콘텐츠 조회
+SELECT * FROM v_content_detail 
+WHERE 플랫폼 = ? 
+ORDER BY 플랫폼평점 DESC;
+
+-- 자바 포인트: pstmt.setString(1, platformName);
+
+-- 5. 콘텐츠 상세 정보 조회
+SELECT 
+    c.content_id, 
+    c.release_year, 
+    c.age_rating, 
+    c.description,
+    v.제목, 
+    v.유형, 
+    v.장르, 
+    v.플랫폼, 
+    v.플랫폼평점
+FROM Content c
+JOIN v_content_detail v ON c.title = v.제목 AND c.content_type = v.유형
+WHERE 제목 LIKE ?
+
+-- 자바 코드 예시
+-- String sql = "SELECT * FROM v_content_detail WHERE content_id = ?";
+-- pstmt = conn.prepareStatement(sql);
+-- pstmt.setInt(1, selectedId); // 사용자가 클릭한 콘텐츠의 ID
+-- rs = pstmt.executeQuery();
