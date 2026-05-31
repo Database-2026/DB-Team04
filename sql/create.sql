@@ -55,7 +55,9 @@ CREATE TABLE PlatformContent (
     pc_id               INT             NOT NULL AUTO_INCREMENT,
     content_id          INT             NOT NULL,
     platform_id         INT             NOT NULL,
-    platform_rating     DECIMAL(3, 1),          
+
+    platform_rating     DECIMAL(3, 2),                
+
     is_available        BOOLEAN         NOT NULL DEFAULT TRUE,
     added_at            DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
  
@@ -129,5 +131,99 @@ CREATE TABLE UserSubscription (
  
 
 
+ -- =========================================================
+-- View 생성
+-- =========================================================
 
- 
+CREATE VIEW PlatformContentView AS
+SELECT
+    PC.pc_id,
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year,
+    P.platform_id,
+    P.platform_name,
+    P.platform_price,
+    PC.platform_rating,
+    PC.is_available,
+    PC.added_at
+FROM PlatformContent PC
+JOIN Content C ON PC.content_id = C.content_id
+JOIN Platform P ON PC.platform_id = P.platform_id;
+
+
+CREATE VIEW HighRatedContentView AS
+SELECT
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year,
+    ROUND(AVG(R.rating), 2) AS avg_user_rating,
+    COUNT(R.review_id) AS review_count
+FROM Content C
+JOIN PlatformContent PC ON C.content_id = PC.content_id
+JOIN Review R ON PC.pc_id = R.pc_id
+GROUP BY
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year
+HAVING AVG(R.rating) >= 4.0;
+
+
+-- =========================================================
+-- Index 생성
+-- =========================================================
+
+CREATE INDEX idx_content_title
+ON Content(title);
+
+CREATE INDEX idx_watchhistory_user
+ON WatchHistory(user_id);
+
+CREATE INDEX idx_platformcontent_content
+ON PlatformContent(content_id);
+
+CREATE INDEX idx_review_user
+ON Review(user_id);
+
+
+-- =========================================================
+-- v_content_detail 뷰 (지우 ContentDAO 전용)
+-- =========================================================
+CREATE VIEW v_content_detail AS
+SELECT
+    C.content_id,
+    C.title           AS 제목,
+    C.content_type    AS 유형,
+    C.release_year    AS 출시연도,
+    C.age_rating      AS 연령등급,
+    G.genre_name      AS 장르,
+    P.platform_name   AS 플랫폼,
+    PC.platform_rating AS 플랫폼평점
+FROM Content C
+LEFT JOIN ContentGenre CG ON C.content_id = CG.content_id
+LEFT JOIN Genre G ON CG.genre_id = G.genre_id
+LEFT JOIN PlatformContent PC ON C.content_id = PC.content_id
+LEFT JOIN Platform P ON PC.platform_id = P.platform_id;
+
+-- =========================================================
+-- v_review_detail 뷰 (지우 콘텐츠별 리뷰 조회 전용)
+-- =========================================================
+CREATE VIEW v_review_detail AS
+SELECT
+    R.review_id,
+    U.username,
+    C.title,
+    P.platform_name,
+    R.rating,
+    R.review_text,
+    R.review_date,
+    R.is_spoiler
+FROM Review R
+JOIN Users U ON R.user_id = U.user_id
+JOIN PlatformContent PC ON R.pc_id = PC.pc_id
+JOIN Content C ON PC.content_id = C.content_id
+JOIN Platform P ON PC.platform_id = P.platform_id;
+
