@@ -49,9 +49,13 @@ Default Schema : DB2026Team04
 4. `DBTeam04/db/DBConnection.java` 열어서 본인 MySQL 비밀번호로 수정 : `private static final String PASSWORD = "본인 비밀번호";`
 
 프로젝트 빌드 환경에 따라 MySQL 드라이버 라이브러리 경로가 깨져 보일 수 있습니다.
+
 프로젝트 우클릭 ➔ Properties ➔ Java Build Path ➔ Libraries 탭으로 이동합니다.
+
 기존에 누락된(Missing) mysql-connector-j-*.jar 항목이 있다면 제거([Remove])합니다.
+
 [Add External JARs...] 버튼을 눌러 실행자의 로컬 환경의 mysql-connector-j 드라이버 파일(v9.x 권장)을 새로 연결해 주십시오.
+
 
 ### (3) 프로그램 실행
 
