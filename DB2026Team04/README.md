@@ -21,7 +21,13 @@ FLUSH PRIVILEGES;
 ```
 
 ## 2. SQL 스크립트 실행 순서
-생성된 DB2026Team04 스키마 내부에서 동봉된 SQL 파일들을 아래의 순서대로 실행하여 테이블 구조와 기본 테스트 데이터를 구축해 주십시오.
+생성된 DB2026Team04 스키마 내부에서 동봉된 SQL 파일들을 아래 순서대로 실행하여 테이블 구조와 기본 테스트 데이터를 구축해 주십시오.
+
+MySQL Connection을 새로 설정할 경우, MySQL Connection옆의 +를 눌러
+Connection Name : DB2026Team04
+Username : DB2026Team04
+Default Schema : DB2026Team04
+로 설정해주세요.
 
 1. Workbench 열고 접속
 2. `File` → `Open SQL Script` → `sql/dropdb.sql` 선택 → ⚡ 실행
