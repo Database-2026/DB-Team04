@@ -1,10 +1,12 @@
-
-CREATE DATABASE IF NOT EXISTS DBTeam04
+CREATE DATABASE DB2026Team04
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE DBTeam04;
+CREATE USER 'DB2026Team04'@'localhost' IDENTIFIED BY 'DB2026Team04';
+GRANT ALL PRIVILEGES ON DB2026Team04.* TO 'DB2026Team04'@'localhost';
+FLUSH PRIVILEGES;
 
+USE DB2026Team04;
 
 # 1. Genre 테이블 생성
 CREATE TABLE Genre (
@@ -55,7 +57,9 @@ CREATE TABLE PlatformContent (
     pc_id               INT             NOT NULL AUTO_INCREMENT,
     content_id          INT             NOT NULL,
     platform_id         INT             NOT NULL,
-    platform_rating     DECIMAL(3, 1),          
+
+    platform_rating     DECIMAL(3, 2),                
+
     is_available        BOOLEAN         NOT NULL DEFAULT TRUE,
     added_at            DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
  
@@ -129,5 +133,104 @@ CREATE TABLE UserSubscription (
  
 
 
+ -- =========================================================
+-- View 생성
+-- =========================================================
 
- 
+CREATE VIEW PlatformContentView AS
+SELECT
+    PC.pc_id,
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year,
+    P.platform_id,
+    P.platform_name,
+    P.platform_price,
+    PC.platform_rating,
+    PC.is_available,
+    PC.added_at
+FROM PlatformContent PC
+JOIN Content C ON PC.content_id = C.content_id
+JOIN Platform P ON PC.platform_id = P.platform_id;
+
+
+CREATE VIEW HighRatedContentView AS
+SELECT
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year,
+    ROUND(AVG(R.rating), 2) AS avg_user_rating,
+    COUNT(R.review_id) AS review_count
+FROM Content C
+JOIN PlatformContent PC ON C.content_id = PC.content_id
+JOIN Review R ON PC.pc_id = R.pc_id
+GROUP BY
+    C.content_id,
+    C.title,
+    C.content_type,
+    C.release_year
+HAVING AVG(R.rating) >= 4.0;
+
+
+-- =========================================================
+-- Index 생성
+-- =========================================================
+
+CREATE INDEX idx_content_title
+ON Content(title);
+
+CREATE INDEX idx_watchhistory_user
+ON WatchHistory(user_id);
+
+CREATE INDEX idx_platformcontent_content
+ON PlatformContent(content_id);
+
+CREATE INDEX idx_review_user
+ON Review(user_id);
+
+
+-- =========================================================
+-- v_content_detail 뷰 (지우 ContentDAO 전용)
+-- =========================================================
+CREATE VIEW v_content_detail AS
+SELECT
+    c.title AS '제목',
+    c.content_type AS '유형',
+    GROUP_CONCAT(
+        g.genre_name
+        SEPARATOR ', '
+    ) AS '장르',
+    p.platform_name AS '플랫폼',
+    pc.platform_rating AS '플랫폼평점'
+FROM Content c
+JOIN ContentGenre cg ON c.content_id = cg.content_id
+JOIN Genre g ON cg.genre_id = g.genre_id
+JOIN PlatformContent pc ON c.content_id = pc.content_id
+JOIN Platform p ON pc.platform_id = p.platform_id
+GROUP BY
+    c.title,
+    c.content_type,
+    p.platform_name,
+    pc.platform_rating;
+
+-- =========================================================
+-- v_review_detail 뷰 (지우 콘텐츠별 리뷰 조회 전용)
+-- =========================================================
+CREATE VIEW v_review_detail AS
+SELECT
+    R.review_id,
+    U.username,
+    C.title,
+    P.platform_name,
+    R.rating,
+    R.review_text,
+    R.review_date,
+    R.is_spoiler
+FROM Review R
+JOIN Users U ON R.user_id = U.user_id
+JOIN PlatformContent PC ON R.pc_id = PC.pc_id
+JOIN Content C ON PC.content_id = C.content_id
+JOIN Platform P ON PC.platform_id = P.platform_id;
+
