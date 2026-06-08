@@ -1,15 +1,20 @@
 package DB2026Team04.dto;
 
+/**
+ * 플랫폼별 콘텐츠 정보를 담는 DTO 클래스
+ */
 public class PlatformContentDTO {
+    private int pcId;                // 플랫폼 콘텐츠 고유 ID
+    private int contentId;           // 콘텐츠 ID
+    private int platformId;          // 플랫폼 ID
+    private double platformRating;   // 해당 플랫폼에서의 평점
+    private boolean isAvailable;     // 현재 제공 여부
 
-    private int pcId;
-    private int contentId;
-    private int platformId;
-    private double platformRating;
-    private boolean isAvailable;
+    public PlatformContentDTO() {
+    }
 
     public int getPcId() {
-        return pcId;
+        return this.pcId;
     }
 
     public void setPcId(int pcId) {
@@ -17,7 +22,7 @@ public class PlatformContentDTO {
     }
 
     public int getContentId() {
-        return contentId;
+        return this.contentId;
     }
 
     public void setContentId(int contentId) {
@@ -25,7 +30,7 @@ public class PlatformContentDTO {
     }
 
     public int getPlatformId() {
-        return platformId;
+        return this.platformId;
     }
 
     public void setPlatformId(int platformId) {
@@ -33,7 +38,7 @@ public class PlatformContentDTO {
     }
 
     public double getPlatformRating() {
-        return platformRating;
+        return this.platformRating;
     }
 
     public void setPlatformRating(double platformRating) {
@@ -41,10 +46,10 @@ public class PlatformContentDTO {
     }
 
     public boolean isAvailable() {
-        return isAvailable;
+        return this.isAvailable;
     }
 
     public void setAvailable(boolean available) {
-        isAvailable = available;
+        this.isAvailable = available;
     }
 }
