@@ -1,75 +1,75 @@
 # DB-Team04
+**OTT 플랫폼 통합 관리 시스템** | 이화여자대학교 데이터베이스 2026 3분반 Team04
+
+---
 
 ## 1. 데이터베이스(MySQL) 환경 세팅
-본 프로그램은 데이터베이스 이름, 계정명, 비밀번호를 모두 DB2026Team04로 통일하여 설계되었습니다.
 
-MySQL Workbench 등 관리 도구에서 root 계정으로 접속하신 후, 아래 스크립트를 순서대로 실행해 주십시오.
+본 프로그램은 데이터베이스 이름, 계정명, 비밀번호를 모두 `DB2026Team04`로 통일하여 설계되었습니다.
 
-### SQL
-```
--- 1. 전용 데이터베이스 생성
-CREATE DATABASE IF NOT EXISTS DB2026Team04;
+MySQL Workbench에서 **root 계정**으로 접속한 후 아래 SQL 스크립트를 순서대로 실행해 주세요.
 
--- 2. 기존 동일 계정 찌꺼기 제거 및 전용 계정 생성 (ID/PW 동일)
-DROP USER IF EXISTS 'DB2026Team04'@'localhost';
-FLUSH PRIVILEGES;
-CREATE USER 'DB2026Team04'@'localhost' IDENTIFIED BY 'DB2026Team04';
-
--- 3. 데이터베이스 권한 부여 및 적용
-GRANT ALL PRIVILEGES ON DB2026Team04.* TO 'DB2026Team04'@'localhost';
-FLUSH PRIVILEGES;
-```
+---
 
 ## 2. SQL 스크립트 실행 순서
-생성된 DB2026Team04 스키마 내부에서 동봉된 SQL 파일들을 아래 순서대로 실행하여 테이블 구조와 기본 테스트 데이터를 구축해 주십시오.
 
-MySQL Connection을 새로 설정할 경우, MySQL Connection옆의 +를 눌러
+> ⚠️ **반드시 아래 순서대로 실행해야 합니다.**
 
-Connection Name : DB2026Team04
+| 순서 | 파일 | 설명 |
+|------|------|------|
+| 1 | `sql/dropdb.sql` | 기존 DB 및 계정 삭제 (초기화) |
+| 2 | `sql/create.sql` | 테이블, 뷰, 인덱스 생성 + 초기 데이터 삽입 |
 
-Username : DB2026Team04
+### Workbench에서 실행하는 방법
 
-Default Schema : DB2026Team04
-
-로 설정해주세요.
-
-1. Workbench 열고 접속
+1. Workbench 실행 후 root 계정으로 접속
 2. `File` → `Open SQL Script` → `sql/dropdb.sql` 선택 → ⚡ 실행
 3. `File` → `Open SQL Script` → `sql/create.sql` 선택 → ⚡ 실행
-4. `File` → `Open SQL Script` → `sql/insert.sql` 선택 → ⚡ 실행
 
-**유의사항: 반드시 drop.sql → create.sql→ insert.sql 순서로 실행**
+### 새 커넥션을 만들어 접속하는 경우
 
-## 3. 자바(Java) 프로젝트 Import 및 실행 방법
+MySQL Connections 옆 `+` 버튼을 눌러 아래와 같이 설정하세요.
 
-**[이클립스 세팅]**
-1. `File` → `New` → `Java Project` → 프로젝트명 입력 → Finish
-2. 압축 푼 폴더의 `src/DBTeam04` 폴더를 이클립스 `src` 폴더로 드래그 앤 드롭
-3. 프로젝트 우클릭 → `Build Path` → `Add External Archives` → `mysql-connector-j-xxx.jar` 선택
-4. `DBTeam04/db/DBConnection.java` 열어서 본인 MySQL 비밀번호로 수정 : `private static final String PASSWORD = "본인 비밀번호";`
+- **Connection Name**: `DB2026Team04`
+- **Username**: `DB2026Team04`
+- **Default Schema**: `DB2026Team04`
 
-프로젝트 빌드 환경에 따라 MySQL 드라이버 라이브러리 경로가 깨져 보일 수 있습니다.
+---
 
-프로젝트 우클릭 ➔ Properties ➔ Java Build Path ➔ Libraries 탭으로 이동합니다.
+## 3. Java 프로젝트 실행 방법
 
-기존에 누락된(Missing) mysql-connector-j-*.jar 항목이 있다면 제거([Remove])합니다.
+### 파일 다운로드
 
-[Add External JARs...] 버튼을 눌러 실행자의 로컬 환경의 mysql-connector-j 드라이버 파일(v9.x 권장)을 새로 연결해 주십시오.
-
-
-### (3) 프로그램 실행
-
-DB2026Team04.Main.java 파일을 선택한 후 Run As ➔ Java Application으로 실행합니다.
-
-
-**[깃허브에서 다운받기]**
-
+**ZIP으로 직접 다운로드**
 1. https://github.com/Database-2026/DB-Team04 접속
-2. 초록색 `Code` 버튼 클릭 → `Download ZIP` 클릭
+2. 초록색 `Code` 버튼 → `Download ZIP` 클릭
 3. 압축 풀기
 
+### Eclipse 세팅
 
-**[테스트 계정]**
+1. `File` → `New` → `Java Project` → 프로젝트명 입력 → Finish
+2. 압축 푼 폴더의 `src/DB2026Team04` 폴더를 Eclipse 프로젝트의 `src` 폴더로 드래그 앤 드롭
+3. 프로젝트 우클릭 → `Build Path` → `Add External JARs` → `mysql-connector-j-xxx.jar` 선택
+
+> **라이브러리 경로가 깨진 경우**
+> 프로젝트 우클릭 → `Properties` → `Java Build Path` → `Libraries` 탭에서
+> Missing 항목 `Remove` 후 `Add External JARs`로 재연결 (v9.x 권장)
+
+### 프로그램 실행
+
+`src/DB2026Team04/Main.java` 우클릭 → `Run As` → `Java Application`
+
+---
+
+## 4. 테스트 계정
+
+| 구분 | 이메일 | 비밀번호 |
+|------|--------|----------|
+| 일반 사용자 | `gunwook@gmail.com` | `pass123!` |
+| 관리자 | `ewhakim@daum.net` | `onion_love` |
+
+> 일반 사용자는 회원가입으로 직접 계정 생성도 가능합니다.
+
 
 - 일반 사용자: 이메일 `gunwook@gmail.com` / 비밀번호 `pass123!`
     
