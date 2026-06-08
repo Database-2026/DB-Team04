@@ -52,6 +52,8 @@ MySQL Connections 옆 `+` 버튼을 눌러 아래와 같이 설정하세요.
 2. 압축 푼 폴더의 `src/DB2026Team04` 폴더를 Eclipse 프로젝트의 `src` 폴더 안으로 드래그 앤 드롭
 3. 프로젝트 우클릭 → `Build Path` → `Add External Archives` → `mysql-connector-j-xxx.jar` 선택
 
+**src 패키지에 module-info.java 파일이 생겼을 경우, 'module-info.java' 파일을 삭제해야 합니다!**
+
 > **라이브러리 경로가 깨진 경우**
 > 프로젝트 우클릭 → `Properties` → `Java Build Path` → `Libraries` 탭에서
 > Missing 항목 `Remove` 후 `Add External JARs`로 재연결 (v9.x 권장)
