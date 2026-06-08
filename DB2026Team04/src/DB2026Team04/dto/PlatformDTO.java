@@ -1,11 +1,15 @@
 package DB2026Team04.dto;
-
+/**
+ * 플랫폼 정보를 저장하고 전달하기 위한 DTO 클래스
+ */
 public class PlatformDTO {
+    //플랫폼 기본 정보
     private int platformId;
     private String platformName;
     private double platformPrice;
-    private int contentCount; // 플랫폼별 제공 콘텐츠 수 조회용
-
+    // 플랫폼별 제공 콘텐츠 수 조회용
+    private int contentCount; 
+    //getter / setter
     public int getPlatformId() {
         return platformId;
     }
